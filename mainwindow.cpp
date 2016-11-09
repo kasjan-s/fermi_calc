@@ -300,3 +300,16 @@ void MainWindow::graphClicked(QCPAbstractPlottable *plottable, int dataIndex)
 
 
 
+
+void MainWindow::on_pushButton_clicked()
+{
+    double Q = ui->qMeVDoubleSpinBox->value();
+    unsigned int z = ui->zSpinBox->value();
+
+    double time = ui->t12SDoubleSpinBox->value();
+    double intensity = ui->intensityDoubleSpinBox->value() / 100.0;
+
+    double lnft = logft(Q, z, false, time, intensity);
+
+    ui->logftDoubleSpinBox->setValue(lnft);
+}

@@ -32,6 +32,8 @@ private slots:
   void moveLegend();
   void graphClicked(QCPAbstractPlottable *plottable, int dataIndex);
 
+  void on_pushButton_clicked();
+
 private:
   Ui::MainWindow *ui;
 };
