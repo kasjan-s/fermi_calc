@@ -297,19 +297,39 @@ void MainWindow::graphClicked(QCPAbstractPlottable *plottable, int dataIndex)
   ui->statusBar->showMessage(message, 2500);
 }
 
-
-
-
-
-void MainWindow::on_pushButton_clicked()
+void MainWindow::on_logftButton_clicked()
 {
     double Q = ui->qMeVDoubleSpinBox->value();
+
     unsigned int z = ui->zSpinBox->value();
 
     double time = ui->t12SDoubleSpinBox->value();
+    QString timeUnit = ui->timeUnit->currentText();
+
+    if (timeUnit == "years")
+        time *= 3600 * 24 * 365;
+    else if (timeUnit == "days")
+        time *= 3600 * 24;
+    else if (timeUnit == "hours")
+        time *= 3600;
+    else if (timeUnit == "minutes")
+        time *= 60;
+    else if (timeUnit == "miliseconds")
+        time /= 1000;
+
     double intensity = ui->intensityDoubleSpinBox->value() / 100.0;
 
-    double lnft = logft(Q, z, false, time, intensity);
+    bool positron;
+    if (ui->betaMinusRadio->isChecked()) {
+        positron = false;
+    } else if (ui->betaPlusRadio->isChecked()) {
+        positron = true;
+    } else if (ui->betaECRadio->isChecked()) {
+        positron = true;
+        Q -= 2 * ELECTRON_RMASS_MEV;
+    }
+
+    double lnft = logft(Q, z, positron, time, intensity);
 
     ui->logftDoubleSpinBox->setValue(lnft);
 }
