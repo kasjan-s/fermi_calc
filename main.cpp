@@ -29,20 +29,30 @@ int main(int argc, char *argv[])
 {
     po::options_description desc("Allowed options");
     desc.add_options()
-        ("help", "produce help message")
-        ("gui", "run graphical user interface")
-        ("logft", "calculate logft value")
+        ("help", "Produce help message.")
+        ("gui", "Run graphical user interface.")
+        ("logft", "Calculate logft value. Have to specify options --Z, --Q, --t, --I, --mode.")
+        ("integral", "Calculate fermi integral. Have to specify --Z and --mode. Options --from, --to, --tick are optional.")
         ("Z", po::value<int>(), "specify Z of daughter nucleus")
         ("Q", po::value<double>(), "Q energy in MeV")
         ("t", po::value<std::string>(), "half-life time")
         ("I", po::value<double>(), "intensity of the decay in %")
         ("mode", po::value<std::string>(), "beta decay mode (minus, plus or EC)")
+        ("from", po::value<double>(), "Low end of integral range.")
+        ("to", po::value<double>(), "High end of integral range.")
+        ("tick", po::value<double>(), "Tick between integral values.")
     ;
 
     po::variables_map vm;
     po::store(po::command_line_parser(argc, argv).
               options(desc).run(), vm);
     po::notify(vm);
+
+    if (vm.count("help")) {
+        std::cout << desc << std::endl;
+        return 0;
+    }
+
 
     if (vm.count("logft")) {
         if (!vm.count("Z")) {
@@ -74,10 +84,41 @@ int main(int argc, char *argv[])
             if (mode == "EC") {
                 q -= ELECTRON_RMASS_MEV * 2;
             }
-            std::cout << q << " " << z << " " << positron << " " << time << " " << intensity << std::endl;
+
+            //TODO: Verify that arguments are in acceptable range.
             double logft_value = logft(q, z, positron, time, intensity);
 
             std::cout << logft_value << std::endl;
+        }
+    } else if (vm.count("integral")) {
+        if (!vm.count("Z")) {
+            std::cerr << "You need to specify value of Z!" << std::endl;
+        } else if (!vm.count("mode")) {
+            std::cerr << "You need to specify decay mode!" << std::endl;
+        } else {
+            int z = vm["Z"].as<int>();
+            double from = 0.01;
+            double to = 25.044;
+            double tick = 0.1;
+
+            if (vm.count("from")) {
+                from = vm["from"].as<double>();
+            }
+            if (vm.count("to")) {
+                from = vm["to"].as<double>();
+            }
+            if (vm.count("till")) {
+                from = vm["till"].as<double>();
+            }
+
+            //TODO: Diffrentiate plus and EC
+            std::string mode = vm["mode"].as<std::string>();
+            bool positron = mode == "minus" ? false : true;
+
+            for (double i = from; i < to; i = i + tick) {
+                double fval = f_value(i, z, positron);
+                std::cout << fval << std::endl;
+            }
         }
     }
 
