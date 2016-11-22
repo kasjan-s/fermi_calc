@@ -319,7 +319,7 @@ void MainWindow::on_logftButton_clicked()
 
     double intensity = ui->intensityDoubleSpinBox->value() / 100.0;
 
-    bool positron;
+    bool positron = false;
     if (ui->betaMinusRadio->isChecked()) {
         positron = false;
     } else if (ui->betaPlusRadio->isChecked()) {

@@ -1,9 +1,11 @@
+#include "fermiplot.h"
+
 #include <cmath>
 #include <iostream>
 #include <stdexcept>
 #include <vector>
 
-const double ELECTRON_RMASS_MEV = 0.510998902;
+//const double ELECTRON_RMASS_MEV = 0.510998902;
 
 const double NA0_0[] =
 {0.00000E+00, 0.00000E+00, 4.70118E-02, 1.09741E-01, 1.82459E-01,

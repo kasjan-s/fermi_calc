@@ -18,7 +18,11 @@ SOURCES += main.cpp\
     fermiplot.cpp
 
 HEADERS  += mainwindow.h \
-    qcustomplot.h
+    qcustomplot.h \
+    fermiplot.h
 
 FORMS    += \
     mainwindow.ui
+
+LIBS    += \
+    -lboost_program_options
