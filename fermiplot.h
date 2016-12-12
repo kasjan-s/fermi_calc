@@ -1,8 +1,20 @@
 #ifndef FERMIPLOT_H
 #define FERMIPLOT_H
 
+
+// CONSTANTS
 const double ELECTRON_RMASS_MEV = 0.510998902;
 
+// FUNCTIONS
+double coefficient(unsigned int n, unsigned int z, double energy, bool positron);
+double base_factor(double Q);
+double correction_factor(double energy, unsigned int z, bool positron);
+double f_value(double Q, unsigned int z, bool positron);
+double logft(double energy, unsigned int z, bool positron, double time, double intensity);
+double convert_to_seconds(double time, std::string unit);
+bool validate_data(unsigned int z, double energy, double time, double intensity);
+
+// DATA TABLES
 extern const double NA0_0[];
 extern const double NA0_1[];
 extern const double NA0_2[];
@@ -70,9 +82,4 @@ extern const double* PA3[];
 extern const double** NA[];
 extern const double** PA[];
 
-double coefficient(unsigned int n, unsigned int z, double energy, bool positron);
-double base_factor(double Q);
-double correction_factor(double energy, unsigned int z, bool positron);
-double f_value(double Q, unsigned int z, bool positron);
-double logft(double energy, unsigned int z, bool positron, double time, double intensity);
 #endif // FERMIPLOT_H

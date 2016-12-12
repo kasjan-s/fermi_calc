@@ -931,6 +931,10 @@ double coefficient(unsigned int n, unsigned int z, double energy, bool positron)
 
     const double** source = positron ? PA[n] : NA[n];
 
+    if (z <= 0 || z > 102) {
+        throw std::out_of_range("z is out of bounds - must be in 1-102 range");
+    }
+
     return source[idx][z];
 }
 
@@ -960,4 +964,51 @@ double logft(double energy, unsigned int z, bool positron, double time, double i
     double t = time / intensity;
 
     return log10(f*t);
+}
+
+double convert_to_seconds(double time, std::string unit) {
+    if (time <= 0) {
+        return -1.0;
+    }
+
+    if (unit == "y" || unit == "year" || unit == "years")
+        time *= 3600 * 24 * 365;
+    else if (unit == "d" || unit == "day" || unit == "days")
+        time *= 3600 * 24;
+    else if (unit == "h" || unit == "hour" || unit == "hours")
+        time *= 3600;
+    else if (unit == "m" || unit == "min" || unit == "minutes" || unit == "mins")
+        time *= 60;
+    else if (unit == "ms")
+        time /= 1000;
+    else if (unit == "s" || unit == "second" || unit == "seconds")
+        time = time;
+    else {
+        std::cerr << "Unknown time unit. Assuming seconds." << std::endl;
+    }
+    return time;
+}
+
+bool validate_data(unsigned int Z, double energy, double time, double intensity) {
+    if (Z <= 0 || Z > 102) {
+        std::cout << "Z is out of bounds - must be between 1 and 102" << std::endl;
+        return false;
+    }
+
+    if (energy < 0.01 || energy > 25.044) {
+        std::cout << "Energy is out of bounds - must be between 0.01 MeV and 25.044 MeV" << std::endl;
+        return false;
+    }
+
+    if (time <= 0) {
+        std::cout << "Half-life time must be positive" << std::endl;
+        return false;
+    }
+
+    if (intensity <= 0 || intensity > 100) {
+        std::cout << "Intensity must be higher than 0% and not above 100%";
+        return false;
+    }
+
+    return true;
 }
