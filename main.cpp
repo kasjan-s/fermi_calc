@@ -70,10 +70,6 @@ int main(int argc, char *argv[])
             if (validate_data(z, q, time, intensity)) {
                 bool positron = mode == "minus" ? false : true;
 
-                if (mode == "EC") {
-                    q -= ELECTRON_RMASS_MEV * 2;
-                }
-
                 //TODO: Verify that arguments are in acceptable range.
                 double logft_value = logft(q, z, positron, time, intensity);
 

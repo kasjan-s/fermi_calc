@@ -53,6 +53,7 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
+         <zorder></zorder>
         </widget>
        </item>
       </layout>
@@ -81,192 +82,185 @@ p, li { white-space: pre-wrap; }
          </property>
         </widget>
        </item>
+       <item>
+        <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0,0,0,0" columnstretch="0,0,0,0">
+         <property name="verticalSpacing">
+          <number>6</number>
+         </property>
+         <item row="4" column="0">
+          <widget class="QLabel" name="betaTypeLabel">
+           <property name="text">
+            <string>Beta type</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="t12SLabel">
+           <property name="text">
+            <string>T 1/2</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="intensityLabel">
+           <property name="text">
+            <string>Intensity [%]</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="qMeVLabel">
+           <property name="text">
+            <string>Q [MeV]</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="zLabel">
+           <property name="text">
+            <string>Z</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="0">
+          <widget class="QLabel" name="logftLabel">
+           <property name="text">
+            <string>logft</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1" colspan="3">
+          <widget class="QSpinBox" name="zSpinBox">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+           <property name="minimum">
+            <number>1</number>
+           </property>
+           <property name="maximum">
+            <number>102</number>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="3">
+          <widget class="QComboBox" name="timeUnit">
+           <item>
+            <property name="text">
+             <string>years</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>days</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>hours</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>minutes</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>seconds</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>miliseconds</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="2" column="1" colspan="2">
+          <widget class="QDoubleSpinBox" name="t12SDoubleSpinBox">
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+           <property name="decimals">
+            <number>3</number>
+           </property>
+           <property name="maximum">
+            <double>100000000000000000.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1" colspan="3">
+          <widget class="QDoubleSpinBox" name="intensityDoubleSpinBox">
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+           <property name="decimals">
+            <number>2</number>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="1" colspan="3">
+          <widget class="QDoubleSpinBox" name="logftDoubleSpinBox">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1" colspan="3">
+          <widget class="QDoubleSpinBox" name="qMeVDoubleSpinBox">
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+           <property name="decimals">
+            <number>3</number>
+           </property>
+           <property name="minimum">
+            <double>0.010000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>25.044000000000000</double>
+           </property>
+           <property name="singleStep">
+            <double>0.010000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QRadioButton" name="betaMinusRadio">
+           <property name="text">
+            <string>Beta Minus</string>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">betaType</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="4" column="2">
+          <widget class="QRadioButton" name="betaPlusRadio">
+           <property name="text">
+            <string>Beta Plus</string>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">betaType</string>
+           </attribute>
+          </widget>
+         </item>
+        </layout>
+       </item>
       </layout>
      </widget>
-    </item>
-    <item>
-     <layout class="QGridLayout" name="gridLayout" columnstretch="0,0,0,0">
-      <item row="4" column="0">
-       <widget class="QLabel" name="betaTypeLabel">
-        <property name="text">
-         <string>Beta type</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="t12SLabel">
-        <property name="text">
-         <string>T 1/2</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="intensityLabel">
-        <property name="text">
-         <string>Intensity [%]</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="qMeVLabel">
-        <property name="text">
-         <string>Q [MeV]</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="zLabel">
-        <property name="text">
-         <string>Z</string>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="1">
-       <widget class="QRadioButton" name="betaMinusRadio">
-        <property name="text">
-         <string>Beta Minus</string>
-        </property>
-        <attribute name="buttonGroup">
-         <string notr="true">betaType</string>
-        </attribute>
-       </widget>
-      </item>
-      <item row="5" column="0">
-       <widget class="QLabel" name="logftLabel">
-        <property name="text">
-         <string>logft</string>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="2">
-       <widget class="QRadioButton" name="betaPlusRadio">
-        <property name="text">
-         <string>Beta Plus</string>
-        </property>
-        <attribute name="buttonGroup">
-         <string notr="true">betaType</string>
-        </attribute>
-       </widget>
-      </item>
-      <item row="4" column="3">
-       <widget class="QRadioButton" name="betaECRadio">
-        <property name="text">
-         <string>Electron Capture</string>
-        </property>
-        <attribute name="buttonGroup">
-         <string notr="true">betaType</string>
-        </attribute>
-       </widget>
-      </item>
-      <item row="1" column="1" colspan="3">
-       <widget class="QSpinBox" name="zSpinBox">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="layoutDirection">
-         <enum>Qt::LeftToRight</enum>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-        <property name="minimum">
-         <number>1</number>
-        </property>
-        <property name="maximum">
-         <number>102</number>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="3">
-       <widget class="QComboBox" name="timeUnit">
-        <item>
-         <property name="text">
-          <string>years</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>days</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>hours</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>minutes</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>seconds</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>miliseconds</string>
-         </property>
-        </item>
-       </widget>
-      </item>
-      <item row="2" column="1" colspan="2">
-       <widget class="QDoubleSpinBox" name="t12SDoubleSpinBox">
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-        <property name="decimals">
-         <number>3</number>
-        </property>
-        <property name="maximum">
-         <double>100000000000000000.000000000000000</double>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1" colspan="3">
-       <widget class="QDoubleSpinBox" name="intensityDoubleSpinBox">
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-        <property name="decimals">
-         <number>2</number>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="1" colspan="3">
-       <widget class="QDoubleSpinBox" name="logftDoubleSpinBox">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1" colspan="3">
-       <widget class="QDoubleSpinBox" name="qMeVDoubleSpinBox">
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-        <property name="decimals">
-         <number>3</number>
-        </property>
-        <property name="minimum">
-         <double>0.010000000000000</double>
-        </property>
-        <property name="maximum">
-         <double>25.044000000000000</double>
-        </property>
-        <property name="singleStep">
-         <double>0.010000000000000</double>
-        </property>
-       </widget>
-      </item>
-     </layout>
     </item>
     <item>
      <widget class="QPushButton" name="logftButton">

@@ -324,9 +324,6 @@ void MainWindow::on_logftButton_clicked()
         positron = false;
     } else if (ui->betaPlusRadio->isChecked()) {
         positron = true;
-    } else if (ui->betaECRadio->isChecked()) {
-        positron = true;
-        Q -= 2 * ELECTRON_RMASS_MEV;
     }
 
     double lnft = logft(Q, z, positron, time, intensity);
