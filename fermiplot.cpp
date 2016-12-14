@@ -991,7 +991,7 @@ double convert_to_seconds(double time, std::string unit) {
 
 bool validate_data(unsigned int Z, double energy, double time, double intensity) {
     if (Z <= 0 || Z > 102) {
-        std::cout << "Z is out of bounds - must be between 1 and 102" << std::endl;
+        std::cout << "Z is out of bounds - must be between 1 and 101" << std::endl;
         return false;
     }
 

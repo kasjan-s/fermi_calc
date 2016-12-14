@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QInputDialog>
 #include "qcustomplot.h"
+#include <vector>
 
 namespace Ui {
 class MainWindow;
@@ -31,11 +32,16 @@ private slots:
   void contextMenuRequest(QPoint pos);
   void moveLegend();
   void graphClicked(QCPAbstractPlottable *plottable, int dataIndex);
-
+  void semiLogScale(bool state);
+  void resizeGraph();
   void on_logftButton_clicked();
+  void valueUpdate();
 
 private:
   Ui::MainWindow *ui;
+  std::vector<int> graphIndexes;
+  double getValueByKey(QCPGraph *graph,double key);
+  QCPItemTracer *tracer;
 };
 
 #endif // MAINWINDOW_H

@@ -9,6 +9,10 @@ MainWindow::MainWindow(QWidget *parent) :
   srand(QDateTime::currentDateTime().toTime_t());
   ui->setupUi(this);
 
+  tracer = new QCPItemTracer(ui->customPlot);
+  tracer->setInterpolating(true);
+  tracer->setVisible(false);
+
   ui->customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes |
                                   QCP::iSelectLegend | QCP::iSelectPlottables);
   ui->customPlot->xAxis->setRange(0.1, 10.044);
@@ -20,7 +24,7 @@ MainWindow::MainWindow(QWidget *parent) :
   ui->customPlot->plotLayout()->addElement(0, 0, title);
 
   ui->customPlot->xAxis->setLabel("Q [MeV]");
-  ui->customPlot->yAxis->setLabel("f");
+  ui->customPlot->yAxis->setLabel("f(Z, E)");
   ui->customPlot->legend->setVisible(true);
   QFont legendFont = font();
   legendFont.setPointSize(10);
@@ -32,6 +36,9 @@ MainWindow::MainWindow(QWidget *parent) :
   addFermiGraph(42, false);
 
   ui->customPlot->rescaleAxes();
+
+  ui->graphBMinus->setChecked(true);
+  ui->betaMinusRadio->setChecked(true);
 
   // connect slot that ties some axis selections together (especially opposite axes):
   connect(ui->customPlot, SIGNAL(selectionChangedByUser()), this, SLOT(selectionChanged()));
@@ -48,6 +55,7 @@ MainWindow::MainWindow(QWidget *parent) :
   connect(ui->customPlot, SIGNAL(axisDoubleClick(QCPAxis*,QCPAxis::SelectablePart,QMouseEvent*)), this, SLOT(axisLabelDoubleClick(QCPAxis*,QCPAxis::SelectablePart)));
   connect(ui->customPlot, SIGNAL(legendDoubleClick(QCPLegend*,QCPAbstractLegendItem*,QMouseEvent*)), this, SLOT(legendDoubleClick(QCPLegend*,QCPAbstractLegendItem*)));
   connect(title, SIGNAL(doubleClicked(QMouseEvent*)), this, SLOT(titleDoubleClick(QMouseEvent*)));
+  connect(ui->semiLogCheckbox, SIGNAL(toggled(bool)), this, SLOT(semiLogScale(bool)));
 
   // connect slot that shows a message in the status bar when a graph is clicked:
   connect(ui->customPlot, SIGNAL(plottableClick(QCPAbstractPlottable*,int,QMouseEvent*)), this, SLOT(graphClicked(QCPAbstractPlottable*,int)));
@@ -55,6 +63,11 @@ MainWindow::MainWindow(QWidget *parent) :
   // setup policy and connect slot for context menu popup:
   ui->customPlot->setContextMenuPolicy(Qt::CustomContextMenu);
   connect(ui->customPlot, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuRequest(QPoint)));
+
+  connect(ui->graphButton, SIGNAL(pressed()), this, SLOT(addNewGraph()));
+  connect(ui->resizeButton, SIGNAL(pressed()), this, SLOT(resizeGraph()));
+  connect(ui->graphMinRangeBox, SIGNAL(valueChanged(double)), this, SLOT(valueUpdate()));
+  connect(ui->graphMaxRangeBox, SIGNAL(valueChanged(double)), this, SLOT(valueUpdate()));
 }
 
 MainWindow::~MainWindow()
@@ -181,6 +194,7 @@ void MainWindow::mouseWheel()
 
 void MainWindow::addFermiGraph(unsigned int z, bool positron)
 {
+    //TODO literal numbers in code
     int n = 100; // number of points in graph
 
     QVector<double> x(n), y(n);
@@ -217,37 +231,18 @@ void MainWindow::removeAllGraphs()
 }
 
 void MainWindow::addNewGraph() {
-    QDialog dialog(this);
-    QFormLayout form(&dialog);
-
-    // Add some text above the fields
-    form.addRow(new QLabel("Z of daughter nucleus and beta type"));
-
-    // Add the lineEdits with their respective labels
-    QSpinBox *zVal = new QSpinBox(&dialog);
-    QString label1 = QString("Z");
-    form.addRow(label1, zVal);
-
-    QCheckBox *betaVal = new QCheckBox(&dialog);
-    QString label2 = QString("beta type");
-    form.addRow(label2, betaVal);
-
-    // Add some standard buttons (Cancel/Ok) at the bottom of the dialog
-    QDialogButtonBox buttonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
-                               Qt::Horizontal, &dialog);
-    form.addRow(&buttonBox);
-    QObject::connect(&buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
-    QObject::connect(&buttonBox, SIGNAL(rejected()), &dialog, SLOT(reject()));
-
-    // Show the dialog as modal
-    if (dialog.exec() == QDialog::Accepted) {
-        // If the user didn't dismiss the dialog, do something with the fields
-
-        unsigned int z = zVal->value();
-        bool pos = betaVal->isChecked();
-
-        addFermiGraph(z, pos);
+    // Should never be the case, but just to be safe
+    if (!ui->graphBMinus->isChecked() && !ui->grapBPlus->isChecked()) {
+        QMessageBox alert;
+        alert.setIcon(QMessageBox::Warning);
+        alert.setText("Please select beta decay mode!");
+        alert.exec();
+        return;
     }
+
+    unsigned int z = ui->graphZValue->value();
+    bool pos = ui->grapBPlus->isChecked() ? true : false;
+    addFermiGraph(z, pos);
 }
 
 void MainWindow::contextMenuRequest(QPoint pos)
@@ -264,7 +259,7 @@ void MainWindow::contextMenuRequest(QPoint pos)
     menu->addAction("Move to bottom left", this, SLOT(moveLegend()))->setData((int)(Qt::AlignBottom|Qt::AlignLeft));
   } else  // general context menu on graphs requested
   {
-    menu->addAction("Add random graph", this, SLOT(addNewGraph()));
+    // REMOVE menu->addAction("Add random graph", this, SLOT(addNewGraph()));
     if (ui->customPlot->selectedGraphs().size() > 0)
       menu->addAction("Remove selected graph", this, SLOT(removeSelectedGraph()));
     if (ui->customPlot->graphCount() > 0)
@@ -329,4 +324,68 @@ void MainWindow::on_logftButton_clicked()
     double lnft = logft(Q, z, positron, time, intensity);
 
     ui->logftDoubleSpinBox->setValue(lnft);
+}
+
+
+void MainWindow::semiLogScale(bool state) {
+    ui->customPlot->yAxis->setScaleType(state ? QCPAxis::stLogarithmic : QCPAxis::stLinear);
+    ui->customPlot->replot();
+}
+
+double MainWindow::getValueByKey(QCPGraph *graph,double key) {
+    // Not perfect solution, but good enough for our needs, as we don't use tracer
+    tracer->setGraph(graph);
+    tracer->setGraphKey(key);
+    tracer->updatePosition();
+
+    return tracer->position->value();
+}
+
+void MainWindow::resizeGraph() {
+    double minRange = ui->graphMinRangeBox->value();
+    double maxRange = ui->graphMaxRangeBox->value();
+
+    ui->customPlot->xAxis->setRange(minRange, maxRange);
+
+    if (ui->customPlot->graphCount() == 0) {
+        return;
+    }
+
+    double minValue = 0.0;
+    double maxValue = 0.0;
+
+    bool firstVal = true;
+
+    for (int i = 0; i < ui->customPlot->graphCount(); ++i) {
+        QCPGraph *graph = ui->customPlot->graph(i);
+
+        double currentMinVal = getValueByKey(graph, minRange);
+        double currentMaxVal = getValueByKey(graph, maxRange);
+
+
+        if (firstVal) {
+            minValue = currentMinVal;
+            maxValue = currentMaxVal;
+            firstVal = false;
+        } else {
+            minValue = currentMinVal < minValue ? currentMinVal : minValue;
+            maxValue = currentMaxVal > maxValue ? currentMaxVal : maxValue;
+        }
+    }
+
+    ui->customPlot->yAxis->setRange(minValue, maxValue);
+    ui->customPlot->replot();
+}
+
+void MainWindow::valueUpdate() {
+    double minRange = ui->graphMinRangeBox->value();
+    double maxRange = ui->graphMaxRangeBox->value();
+
+    if (minRange >= maxRange) {
+        ui->resizeButton->setText("Incorrect range");
+        ui->resizeButton->setDisabled(true);
+    } else {
+        ui->resizeButton->setText("Resize");
+        ui->resizeButton->setDisabled(false);
+    }
 }
