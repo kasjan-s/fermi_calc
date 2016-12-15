@@ -15,11 +15,13 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     qcustomplot.cpp \
-    fermiplot.cpp
+    fermiplot.cpp \
+    customdoublespinbox.cpp
 
 HEADERS  += mainwindow.h \
     qcustomplot.h \
-    fermiplot.h
+    fermiplot.h \
+    customdoublespinbox.h
 
 FORMS    += \
     mainwindow.ui
