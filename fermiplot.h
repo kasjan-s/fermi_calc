@@ -12,7 +12,7 @@ double correction_factor(double energy, unsigned int z, bool positron);
 double f_value(double Q, unsigned int z, bool positron);
 double logft(double energy, unsigned int z, bool positron, double time, double intensity);
 double convert_to_seconds(double time, std::string unit);
-bool validate_data(unsigned int z, double energy, double time, double intensity);
+bool validate_data(unsigned int z, double energy, double time, double intensity, std::string mode);
 
 // DATA TABLES
 extern const double NA0_0[];

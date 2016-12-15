@@ -989,7 +989,7 @@ double convert_to_seconds(double time, std::string unit) {
     return time;
 }
 
-bool validate_data(unsigned int Z, double energy, double time, double intensity) {
+bool validate_data(unsigned int Z, double energy, double time, double intensity, std::string mode) {
     if (Z <= 0 || Z > 102) {
         std::cout << "Z is out of bounds - must be between 1 and 101" << std::endl;
         return false;
@@ -1006,7 +1006,12 @@ bool validate_data(unsigned int Z, double energy, double time, double intensity)
     }
 
     if (intensity <= 0 || intensity > 100) {
-        std::cout << "Intensity must be higher than 0% and not above 100%";
+        std::cout << "Intensity must be higher than 0% and not above 100%" << std::endl;
+        return false;
+    }
+
+    if (mode != "minus" && mode != "-" && mode != "plus" && mode !="+") {
+        std::cout << "Beta decay mode must be specified! Acceptable values: minus, -, plus, +" << std::endl;
         return false;
     }
 
