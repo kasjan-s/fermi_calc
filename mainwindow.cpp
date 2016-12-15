@@ -323,7 +323,7 @@ void MainWindow::on_logftButton_clicked()
 
     double lnft = logft(Q, z, positron, time, intensity);
 
-    ui->logftDoubleSpinBox->setValue(lnft);
+    ui->logftValueBox->setText(QString::number(lnft));
 }
 
 

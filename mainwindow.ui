@@ -217,16 +217,6 @@
               </property>
              </widget>
             </item>
-            <item row="5" column="1" colspan="3">
-             <widget class="QDoubleSpinBox" name="logftDoubleSpinBox">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
             <item row="0" column="1" colspan="3">
              <widget class="QDoubleSpinBox" name="qMeVDoubleSpinBox">
               <property name="alignment">
@@ -264,6 +254,16 @@
               <attribute name="buttonGroup">
                <string notr="true">betaType</string>
               </attribute>
+             </widget>
+            </item>
+            <item row="5" column="1" colspan="3">
+             <widget class="QLineEdit" name="logftValueBox">
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
              </widget>
             </item>
            </layout>
