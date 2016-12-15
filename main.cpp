@@ -14,21 +14,22 @@ int main(int argc, char *argv[])
     try {
         desc.add_options()
             ("help,h", "Produce help message.")
-            ("gui", "Run graphical user interface.")
-            ("logft", "Calculate logft value. Have to specify options --Z, --Q, --t, --I, --mode.")
-            ("integral", "Calculate fermi integral. Have to specify --Z and --mode. Options --from, --to, --tick are optional.")
-            ("Z", po::value<int>(), "specify Z of daughter nucleus")
-            ("Q", po::value<double>(), "Q energy in MeV")
-            ("t", po::value<std::string>(), "half-life time")
-            ("I", po::value<double>(), "intensity of the decay in %")
-            ("mode", po::value<std::string>(), "beta decay mode (minus, plus or EC)")
-            ("from", po::value<double>(), "Low end of integral range.")
-            ("to", po::value<double>(), "High end of integral range.")
-            ("tick", po::value<double>(), "Tick between integral values.")
+            ("gui,g", "Run graphical user interface.")
+            ("logft,l", "Calculate logft value. Have to specify options --Z, --Q, --t, --I, --mode.")
+            ("integral,f", "Calculate fermi integral value. Have to specify --Z and --mode. Add --energy option for single value or options --from, --to, --tick for a range of values.")
+            ("nucleus,z", po::value<int>(), "specify Z of daughter nucleus")
+            ("energy,q", po::value<double>(), "Q energy in MeV")
+            ("half-life,t", po::value<std::string>(), "half-life time")
+            ("intensity,i", po::value<double>(), "intensity of the decay in %")
+            ("mode,m", po::value<std::string>(), "beta decay mode (minus or plus)")
+            ("beg,b", po::value<double>(), "Low end of integral range.")
+            ("end,e", po::value<double>(), "High end of integral range.")
+            ("step,s", po::value<double>(), "Step between integral values. Default it 0.1.")
         ;
 
-        po::store(po::command_line_parser(argc, argv).
-                  options(desc).run(), vm);
+        po::store(po::command_line_parser(argc, argv)
+                  .options(desc)
+                  .run(), vm);
         po::notify(vm);
     } catch (po::error& ex) {
         std::cerr << ex.what() << std::endl;
@@ -36,28 +37,37 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    if (vm.count("help")) {
+    if (vm.count("help") || vm.empty()) {
+        std::cout << "Example usage:" << std::endl;
+        std::cout << argv[0] << " -f -z 30 -mode minus -q 0.5" << std::endl;
+        std::cout << argv[0] << " --logft --nucleus 30 --energy 0.573 --half-life 12.8h --intensity 38 --mode minus" << std::endl;
+        std::cout << argv[0] << " -l -z 30 -q 0.573 -t 46080s -i 38 -m -" << std::endl;
+        std::cout << argv[0] << " --logft -z 30 --energy 0.573 -t 46080 --intensity 38 --mode -" << std::endl;
+        std::cout << argv[0] << " --integral -z 30 -mode minus -b 0.1 -e 1.0 -s 0.1" << std::endl;
+        std::cout << argv[0] << " -f -z 30 -mode minus -q 0.5" << std::endl;
+        std::cout << std::endl;
         std::cout << desc << std::endl;
+
         return 0;
     }
 
-
-    if (vm.count("logft")) {
-        if (!vm.count("Z")) {
+    if (vm.count("logft") || vm.count("l")) {
+        if (!vm.count("z") && !vm.count("nucleus")) {
+            std::cout << vm.count("nucles") << std::endl;
             std::cerr << "You need to specify value of Z!" << std::endl;
-        } else if (!vm.count("Q")) {
+        } else if (!vm.count("q") && !vm.count("energy")) {
             std::cerr << "You need to specify value of Q!" << std::endl;
-        } else if (!vm.count("t")) {
+        } else if (!vm.count("t") && !vm.count("half-life")) {
             std::cerr << "You need to specify half-time!" << std::endl;
-        } else if (!vm.count("I")) {
+        } else if (!vm.count("i") && !vm.count("intensity")) {
             std::cerr << "You need to specify intensity of decay!" << std::endl;
-        } else if (!vm.count("mode")) {
+        } else if (!vm.count("mode") && !vm.count("m")) {
             std::cerr << "You need to specify decay mode!" << std::endl;
         } else {
-            int z = vm["Z"].as<int>();
-            double q = vm["Q"].as<double>();
-            std::string halftime = vm["t"].as<std::string>();
-            double intensity = vm["I"].as<double>() / 100;
+            int z = vm.count("z") ? vm["z"].as<int>() : vm["nucleus"].as<int>();
+            double q = vm.count("q") ? vm["q"].as<double>() : vm["energy"].as<double>();
+            std::string halftime = vm.count("t") ? vm["t"].as<std::string>() : vm["half-life"].as<std::string>();
+            double intensity = vm.count("i") ? vm["i"].as<double>() / 100 : vm["intensity"].as<double>() / 100;
 
             double time;
             char unit[10];
@@ -65,47 +75,89 @@ int main(int argc, char *argv[])
 
             time = convert_to_seconds(time, std::string(unit));
 
-            std::string mode = vm["mode"].as<std::string>();
+            std::string mode = vm.count("mode") ? vm["mode"].as<std::string>() : vm["m"].as<std::string>();
 
-            if (validate_data(z, q, time, intensity)) {
-                bool positron = mode == "minus" ? false : true;
+            if (validate_data(z, q, time, intensity, mode)) {
+                bool positron = mode == "minus" || mode == "-" ? false : true;
 
-                //TODO: Verify that arguments are in acceptable range.
                 double logft_value = logft(q, z, positron, time, intensity);
 
                 std::cout << logft_value << std::endl;
             }
         }
-    } else if (vm.count("integral")) {
-        if (!vm.count("Z")) {
+
+        return 0;
+    }
+
+    if (vm.count("integral")) {
+        if (!vm.count("z") && !vm.count("nucleus")) {
             std::cerr << "You need to specify value of Z!" << std::endl;
-        } else if (!vm.count("mode")) {
+        } else if (!vm.count("mode") && !vm.count("m")) {
             std::cerr << "You need to specify decay mode!" << std::endl;
         } else {
-            int z = vm["Z"].as<int>();
-            double from = 0.01;
-            double to = 25.044;
-            double tick = 0.1;
-
-            if (vm.count("from")) {
-                from = vm["from"].as<double>();
-            }
-            if (vm.count("to")) {
-                from = vm["to"].as<double>();
-            }
-            if (vm.count("till")) {
-                from = vm["till"].as<double>();
+            int z = vm.count("z") ? vm["z"].as<int>() : vm["nucleus"].as<int>();
+            if (z <= 0 || z > 102) {
+                std::cout << "Z is out of bounds - must be between 1 and 101" << std::endl;
+                return -1;
             }
 
-            //TODO: Diffrentiate plus and EC
-            std::string mode = vm["mode"].as<std::string>();
-            bool positron = mode == "minus" ? false : true;
+            double from = -1.0;
+            double to = -1.0;
+            double step = 0.1;
 
-            for (double i = from; i < to; i = i + tick) {
-                double fval = f_value(i, z, positron);
-                std::cout << fval << std::endl;
+            if (vm.count("beg") || vm.count("b")) {
+                double beg = from = vm.count("beg") ? vm["beg"].as<double>() : vm["b"].as<double>();
+                if (beg >= 0.01 && beg < 25.044) {
+                    from = beg;
+                } else {
+                    std::cout << "Lower bound is out of range!" << std::endl;
+                }
+            }
+            if (vm.count("end") || vm.count("e")) {
+                double end = vm.count("end") ? vm["end"].as<double>() : vm["e"].as<double>();
+                if (end > 0.01 && end <= 25.044) {
+                    to = end;
+                } else {
+                    std::cout << "Higher bound is out of range!" << std::endl;
+                }
+            }
+            if (vm.count("step") || vm.count("s")) {
+                double tick = vm.count("step") ? vm["step"].as<double>() : vm["s"].as<double>();
+                if (tick > 0)
+                    step = tick;
+                else
+                    std::cout << "Step value must be positive!" << std::endl;
+
+            }
+
+            std::string mode = vm.count("mode") ? vm["mode"].as<std::string>() : vm["m"].as<std::string>();
+            bool positron = mode == "minus" || mode == "-" ? false : true;
+
+            if (from > 0 && to > 0 && from <= to && step > 0) {
+                std::cout << "Z=" << z << ", mode=" << mode << ", beg=" << from << ", end=" << to << ", step=" << step << std::endl;
+                std::cout << "Q [MeV]\tf(Z,E)" << std::endl;
+                for (double i = from; i < to; i += step) {
+                    double fval = f_value(i, z, positron);
+                    std::cout << i << "\t" << fval << std::endl;
+                }
+            } else {
+                if (!vm.count("energy") && !vm.count("q")) {
+                    std::cerr << "You need to specify energy!" << std::endl;
+                    return -1;
+                }
+
+                double energy = vm.count("q") ? vm["q"].as<double>() : vm["energy"].as<double>();
+
+                if (energy < 0.01 || energy > 25.044) {
+                    std::cout << "Energy must be between 0.01 and 25.044 MeV!" << std::endl;
+                    return -1;
+                }
+
+                std::cout << energy << "\t" << f_value(energy, z, positron) << std::endl;
             }
         }
+
+        return 0;
     }
 
     if (vm.count("gui")) {

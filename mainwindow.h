@@ -4,7 +4,6 @@
 #include <QMainWindow>
 #include <QInputDialog>
 #include "qcustomplot.h"
-#include <vector>
 
 namespace Ui {
 class MainWindow;
@@ -39,7 +38,6 @@ private slots:
 
 private:
   Ui::MainWindow *ui;
-  std::vector<int> graphIndexes;
   double getValueByKey(QCPGraph *graph,double key);
   QCPItemTracer *tracer;
 };
