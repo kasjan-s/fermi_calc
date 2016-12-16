@@ -1,10 +1,10 @@
-#include "mainwindow.h"
-#include "ui_mainwindow.h"
-#include "fermiplot.cpp"
+#include "fermicalcwindow.h"
+#include "ui_fermicalcwindow.h"
+#include "fermicalc.cpp"
 
-MainWindow::MainWindow(QWidget *parent) :
+FermiCalcWindow::FermiCalcWindow(QWidget *parent) :
   QMainWindow(parent),
-  ui(new Ui::MainWindow)
+  ui(new Ui::FermiCalcWindow)
 {
   srand(QDateTime::currentDateTime().toTime_t());
   ui->setupUi(this);
@@ -70,12 +70,12 @@ MainWindow::MainWindow(QWidget *parent) :
   connect(ui->graphMaxRangeBox, SIGNAL(valueChanged(double)), this, SLOT(valueUpdate()));
 }
 
-MainWindow::~MainWindow()
+FermiCalcWindow::~FermiCalcWindow()
 {
   delete ui;
 }
 
-void MainWindow::titleDoubleClick(QMouseEvent* event)
+void FermiCalcWindow::titleDoubleClick(QMouseEvent* event)
 {
   Q_UNUSED(event)
   if (QCPTextElement *title = qobject_cast<QCPTextElement*>(sender()))
@@ -91,7 +91,7 @@ void MainWindow::titleDoubleClick(QMouseEvent* event)
   }
 }
 
-void MainWindow::axisLabelDoubleClick(QCPAxis *axis, QCPAxis::SelectablePart part)
+void FermiCalcWindow::axisLabelDoubleClick(QCPAxis *axis, QCPAxis::SelectablePart part)
 {
   // Set an axis label by double clicking on it
   if (part == QCPAxis::spAxisLabel) // only react when the actual axis label is clicked, not tick label or axis backbone
@@ -106,7 +106,7 @@ void MainWindow::axisLabelDoubleClick(QCPAxis *axis, QCPAxis::SelectablePart par
   }
 }
 
-void MainWindow::legendDoubleClick(QCPLegend *legend, QCPAbstractLegendItem *item)
+void FermiCalcWindow::legendDoubleClick(QCPLegend *legend, QCPAbstractLegendItem *item)
 {
   // Rename a graph by double clicking on its legend item
   Q_UNUSED(legend)
@@ -123,7 +123,7 @@ void MainWindow::legendDoubleClick(QCPLegend *legend, QCPAbstractLegendItem *ite
   }
 }
 
-void MainWindow::selectionChanged()
+void FermiCalcWindow::selectionChanged()
 {
   /*
    normally, axis base line, axis tick labels and axis labels are selectable separately, but we want
@@ -166,7 +166,7 @@ void MainWindow::selectionChanged()
   }
 }
 
-void MainWindow::mousePress()
+void FermiCalcWindow::mousePress()
 {
   // if an axis is selected, only allow the direction of that axis to be dragged
   // if no axis is selected, both directions may be dragged
@@ -179,7 +179,7 @@ void MainWindow::mousePress()
     ui->customPlot->axisRect()->setRangeDrag(Qt::Horizontal|Qt::Vertical);
 }
 
-void MainWindow::mouseWheel()
+void FermiCalcWindow::mouseWheel()
 {
   // if an axis is selected, only allow the direction of that axis to be zoomed
   // if no axis is selected, both directions may be zoomed
@@ -192,7 +192,7 @@ void MainWindow::mouseWheel()
     ui->customPlot->axisRect()->setRangeZoom(Qt::Horizontal|Qt::Vertical);
 }
 
-void MainWindow::addFermiGraph(unsigned int z, bool positron)
+void FermiCalcWindow::addFermiGraph(unsigned int z, bool positron)
 {
     //TODO literal numbers in code
     int n = 100; // number of points in graph
@@ -215,7 +215,7 @@ void MainWindow::addFermiGraph(unsigned int z, bool positron)
     ui->customPlot->replot();
 }
 
-void MainWindow::removeSelectedGraph()
+void FermiCalcWindow::removeSelectedGraph()
 {
   if (ui->customPlot->selectedGraphs().size() > 0)
   {
@@ -224,13 +224,13 @@ void MainWindow::removeSelectedGraph()
   }
 }
 
-void MainWindow::removeAllGraphs()
+void FermiCalcWindow::removeAllGraphs()
 {
   ui->customPlot->clearGraphs();
   ui->customPlot->replot();
 }
 
-void MainWindow::addNewGraph() {
+void FermiCalcWindow::addNewGraph() {
     // Should never be the case, but just to be safe
     if (!ui->graphBMinus->isChecked() && !ui->grapBPlus->isChecked()) {
         QMessageBox alert;
@@ -245,7 +245,7 @@ void MainWindow::addNewGraph() {
     addFermiGraph(z, pos);
 }
 
-void MainWindow::contextMenuRequest(QPoint pos)
+void FermiCalcWindow::contextMenuRequest(QPoint pos)
 {
   QMenu *menu = new QMenu(this);
   menu->setAttribute(Qt::WA_DeleteOnClose);
@@ -269,7 +269,7 @@ void MainWindow::contextMenuRequest(QPoint pos)
   menu->popup(ui->customPlot->mapToGlobal(pos));
 }
 
-void MainWindow::moveLegend()
+void FermiCalcWindow::moveLegend()
 {
   if (QAction* contextAction = qobject_cast<QAction*>(sender())) // make sure this slot is really called by a context menu action, so it carries the data we need
   {
@@ -283,7 +283,7 @@ void MainWindow::moveLegend()
   }
 }
 
-void MainWindow::graphClicked(QCPAbstractPlottable *plottable, int dataIndex)
+void FermiCalcWindow::graphClicked(QCPAbstractPlottable *plottable, int dataIndex)
 {
   // since we know we only have QCPGraphs in the plot, we can immediately access interface1D()
   // usually it's better to first check whether interface1D() returns non-zero, and only then use it.
@@ -292,7 +292,7 @@ void MainWindow::graphClicked(QCPAbstractPlottable *plottable, int dataIndex)
   ui->statusBar->showMessage(message, 2500);
 }
 
-void MainWindow::on_logftButton_clicked()
+void FermiCalcWindow::on_logftButton_clicked()
 {
     double Q = ui->qMeVDoubleSpinBox->value();
 
@@ -327,12 +327,12 @@ void MainWindow::on_logftButton_clicked()
 }
 
 
-void MainWindow::semiLogScale(bool state) {
+void FermiCalcWindow::semiLogScale(bool state) {
     ui->customPlot->yAxis->setScaleType(state ? QCPAxis::stLogarithmic : QCPAxis::stLinear);
     ui->customPlot->replot();
 }
 
-double MainWindow::getValueByKey(QCPGraph *graph,double key) {
+double FermiCalcWindow::getValueByKey(QCPGraph *graph,double key) {
     // Not perfect solution, but good enough for our needs, as we don't use tracer
     tracer->setGraph(graph);
     tracer->setGraphKey(key);
@@ -341,7 +341,7 @@ double MainWindow::getValueByKey(QCPGraph *graph,double key) {
     return tracer->position->value();
 }
 
-void MainWindow::resizeGraph() {
+void FermiCalcWindow::resizeGraph() {
     double minRange = ui->graphMinRangeBox->value();
     double maxRange = ui->graphMaxRangeBox->value();
 
@@ -377,7 +377,7 @@ void MainWindow::resizeGraph() {
     ui->customPlot->replot();
 }
 
-void MainWindow::valueUpdate() {
+void FermiCalcWindow::valueUpdate() {
     double minRange = ui->graphMinRangeBox->value();
     double maxRange = ui->graphMaxRangeBox->value();
 

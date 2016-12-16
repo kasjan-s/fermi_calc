@@ -1,4 +1,4 @@
-#include "fermiplot.h"
+#include "fermicalc.h"
 
 #include <cmath>
 #include <iostream>

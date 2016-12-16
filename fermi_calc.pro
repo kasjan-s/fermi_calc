@@ -8,23 +8,24 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
-TARGET = fermi_plot
+TARGET = fermi_calc
 TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp \
     qcustomplot.cpp \
-    fermiplot.cpp \
-    customdoublespinbox.cpp
+    customdoublespinbox.cpp \
+    fermicalcwindow.cpp \
+    fermicalc.cpp
 
-HEADERS  += mainwindow.h \
+HEADERS  += \
     qcustomplot.h \
-    fermiplot.h \
-    customdoublespinbox.h
+    customdoublespinbox.h \
+    fermicalcwindow.h \
+    fermicalc.h
 
 FORMS    += \
-    mainwindow.ui
+    fermicalcwindow.ui
 
 LIBS    += \
     -lboost_program_options

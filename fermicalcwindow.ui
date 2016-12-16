@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
+ <class>FermiCalcWindow</class>
  <widget class="QMainWindow" name="MainWindow">
   <property name="geometry">
    <rect>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Fermi plot</string>
+   <string>Fermi integral calculator</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">

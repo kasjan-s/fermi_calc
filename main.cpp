@@ -1,6 +1,6 @@
 #include <QApplication>
-#include "fermiplot.h"
-#include "mainwindow.h"
+#include "fermicalc.h"
+#include "fermicalcwindow.h"
 #include <boost/program_options.hpp>
 #include <stdio.h>
 
@@ -162,7 +162,7 @@ int main(int argc, char *argv[])
 
     if (vm.count("gui")) {
         QApplication a(argc, argv);
-        MainWindow w;
+        FermiCalcWindow w;
         w.show();
 
         return a.exec();

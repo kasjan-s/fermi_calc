@@ -1,21 +1,21 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef FERMICALCWINDOW_H
+#define FERMICALCWINDOW_H
 
 #include <QMainWindow>
 #include <QInputDialog>
 #include "qcustomplot.h"
 
 namespace Ui {
-class MainWindow;
+class FermiCalcWindow;
 }
 
-class MainWindow : public QMainWindow
+class FermiCalcWindow : public QMainWindow
 {
   Q_OBJECT
 
 public:
-  explicit MainWindow(QWidget *parent = 0);
-  ~MainWindow();
+  explicit FermiCalcWindow(QWidget *parent = 0);
+  ~FermiCalcWindow();
 
 private slots:
   void titleDoubleClick(QMouseEvent *event);
@@ -37,9 +37,9 @@ private slots:
   void valueUpdate();
 
 private:
-  Ui::MainWindow *ui;
+  Ui::FermiCalcWindow *ui;
   double getValueByKey(QCPGraph *graph,double key);
   QCPItemTracer *tracer;
 };
 
-#endif // MAINWINDOW_H
+#endif // FERMICALCWINDOW_H
